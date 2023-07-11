@@ -1,0 +1,561 @@
+--------------------CRUD OPERATIONS [MongoDB]--------------------
+_________________________________________________________________
+
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+PS C:\Users\owner> // run mongosh
+// : The term '//' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ // run mongosh
++ ~~
+    + CategoryInfo          : ObjectNotFound: (//:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS C:\Users\owner> mongosh
+Current Mongosh Log ID: 64ad0ed5d4916ddb307f6cc1
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.10.1
+Using MongoDB:          6.0.7
+Using Mongosh:          1.10.1
+
+For mongosh info see: https://docs.mongodb.com/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2023-07-11T13:23:59.094+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> //test is our default database provided by mongosh
+
+test> // mongosh allows us to perform JavaScript operation
+
+test> 1 + 1
+2
+test> raghav.toUpperCase()
+ReferenceError: raghav is not defined
+test> "raghav".toUpperCase();
+RAGHAV
+test> // In MongoDB database = database, tables = collections, rows / tuples = documents, columns = fields
+
+test> // In order to create a new database or shitch to any existing database we can use the "use" command
+
+test> use myDatabase
+switched to db myDatabase
+myDatabase> // to check all the databases in our system we can use the "db" command
+
+myDatabase> db
+myDatabase
+myDatabase> // to check all the collections in our database we use the "show collections" command
+
+myDatabase> show collections
+
+myDatabase> // to see all available databases use "show dbs" command
+
+myDatabase> show dbs
+admin    40.00 KiB
+config  108.00 KiB
+local    72.00 KiB
+myDatabase> // switching to local database
+
+myDatabase> use local
+switched to db local
+local> // switching back to myDatabase
+
+local> use myDatabase
+switched to db myDatabase
+myDatabase> // let's create a collection with a name "posts"
+
+myDatabase> // collections can be created using
+
+myDatabase> // db.createCollection("posts")
+
+myDatabase> // or we can also create a collection while inserting a document into it
+
+myDatabase> db.posts.insertOne({
+... title: "Post Title 1",
+... body: "Body of Post",
+... category: "news",
+... likes: 1,
+... tags: [ "news", "events" ],
+... date: Date()
+... })
+{
+  acknowledged: true,
+  insertedId: ObjectId("64ad1415d4916ddb307f6cc2")
+}
+myDatabase> // lets check if our collection "posts" is created or not
+
+myDatabase> show collections
+posts
+myDatabase> //NOTE:- in mongoDB, a collection is not actually created until it gets contect
+
+myDatabase> // INSERT DOCUMENTS - "insertOne()", "insertMany()" or "insert()"
+
+myDatabase> // inserting a document using "insertOne()" method - to insert one document
+
+myDatabase> db.posts.insertOne({
+... title: "Post Title 2",
+... body: "Body of Post",
+... category: "Technology",
+... likes: 2,
+... tags: [ "news", "technology" ],
+... date: Date()
+... })
+{
+  acknowledged: true,
+  insertedId: ObjectId("64ad1881d4916ddb307f6cc3")
+}
+myDatabase> // inserting more than one documents using "insertMany()" method
+
+myDatabase> db.posts.insertMany([
+... {
+... title: "Post Title 3",
+... body: "Body of Post",
+... category: "event",
+... likes: 5,
+... tags: [ "news", "events" ],
+... date: Date()
+... },
+... {
+... title: "Post Title 4",
+... body: "Body of Post",
+... category: "sports",
+... likes: 8,
+... tags: [ "news", "sports" ],
+... date: Date()
+... }
+... ])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("64ad19ccd4916ddb307f6cc4"),
+    '1': ObjectId("64ad19ccd4916ddb307f6cc5")
+  }
+}
+myDatabase> // NOTE:- instead of "insertMany()" method you can also use "insert()" method
+
+myDatabase> // NOTE:- in mongoDB when you create a document an _id is generated to the corresponding document
+
+myDatabase> // FIND DATA / DOCUMENT - "findOne()", "find()"
+
+myDatabase> // "findOne()" will return the first document of the collection
+
+myDatabase> db.posts.findOnd()
+TypeError: db.posts.findOnd is not a function
+myDatabase> // my bad
+
+myDatabase> db.posts.findOne()
+{
+  _id: ObjectId("64ad1415d4916ddb307f6cc2"),
+  title: 'Post Title 1',
+  body: 'Body of Post',
+  category: 'news',
+  likes: 1,
+  tags: [ 'news', 'events' ],
+  date: 'Tue Jul 11 2023 14:04:29 GMT+0530 (India Standard Time)'
+}
+myDatabase> // "find()" will return all the documents of the collection
+
+myDatabase> db.posts.find()
+[
+  {
+    _id: ObjectId("64ad1415d4916ddb307f6cc2"),
+    title: 'Post Title 1',
+    body: 'Body of Post',
+    category: 'news',
+    likes: 1,
+    tags: [ 'news', 'events' ],
+    date: 'Tue Jul 11 2023 14:04:29 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad1881d4916ddb307f6cc3"),
+    title: 'Post Title 2',
+    body: 'Body of Post',
+    category: 'Technology',
+    likes: 2,
+    tags: [ 'news', 'technology' ],
+    date: 'Tue Jul 11 2023 14:23:21 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc4"),
+    title: 'Post Title 3',
+    body: 'Body of Post',
+    category: 'event',
+    likes: 5,
+    tags: [ 'news', 'events' ],
+    date: 'Tue Jul 11 2023 14:28:52 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc5"),
+    title: 'Post Title 4',
+    body: 'Body of Post',
+    category: 'sports',
+    likes: 8,
+    tags: [ 'news', 'sports' ],
+    date: 'Tue Jul 11 2023 14:28:52 GMT+0530 (India Standard Time)'
+  }
+]
+myDatabase> // QUERYING DATA - "findOne()", "find()"
+
+myDatabase> // "findOne(QUERY)" will return only one & the first document of the collection which matches the
+query
+
+myDatabase> db.posts.findOne({
+... likes: 5
+... })
+{
+  _id: ObjectId("64ad19ccd4916ddb307f6cc4"),
+  title: 'Post Title 3',
+  body: 'Body of Post',
+  category: 'event',
+  likes: 5,
+  tags: [ 'news', 'events' ],
+  date: 'Tue Jul 11 2023 14:28:52 GMT+0530 (India Standard Time)'
+}
+myDatabase> // "find(QUERY)" will return all the documents of the collection which matches the query
+
+myDatabase> db.posts.find({
+... body: "Body of Post"
+... })
+[
+  {
+    _id: ObjectId("64ad1415d4916ddb307f6cc2"),
+    title: 'Post Title 1',
+    body: 'Body of Post',
+    category: 'news',
+    likes: 1,
+    tags: [ 'news', 'events' ],
+    date: 'Tue Jul 11 2023 14:04:29 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad1881d4916ddb307f6cc3"),
+    title: 'Post Title 2',
+    body: 'Body of Post',
+    category: 'Technology',
+    likes: 2,
+    tags: [ 'news', 'technology' ],
+    date: 'Tue Jul 11 2023 14:23:21 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc4"),
+    title: 'Post Title 3',
+    body: 'Body of Post',
+    category: 'event',
+    likes: 5,
+    tags: [ 'news', 'events' ],
+    date: 'Tue Jul 11 2023 14:28:52 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc5"),
+    title: 'Post Title 4',
+    body: 'Body of Post',
+    category: 'sports',
+    likes: 8,
+    tags: [ 'news', 'sports' ],
+    date: 'Tue Jul 11 2023 14:28:52 GMT+0530 (India Standard Time)'
+  }
+]
+myDatabase> // PROJECTION - both find methods will accept second parameter called projection
+
+myDatabase> // 1 is for include, 0 is for exclude
+
+myDatabase> db.posts.find({}, {title: 1, likes: 1})
+[
+  {
+    _id: ObjectId("64ad1415d4916ddb307f6cc2"),
+    title: 'Post Title 1',
+    likes: 1
+  },
+  {
+    _id: ObjectId("64ad1881d4916ddb307f6cc3"),
+    title: 'Post Title 2',
+    likes: 2
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc4"),
+    title: 'Post Title 3',
+    likes: 5
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc5"),
+    title: 'Post Title 4',
+    likes: 8
+  }
+]
+myDatabase> // NOTE:- Notice that the _id field is also included. This field is always included unless specifically excluded
+
+myDatabase> // let's exclude the _id field
+
+myDatabase> db.posts.find({}, {_id: 0, title: 1, likes: 1})
+[
+  { title: 'Post Title 1', likes: 1 },
+  { title: 'Post Title 2', likes: 2 },
+  { title: 'Post Title 3', likes: 5 },
+  { title: 'Post Title 4', likes: 8 }
+]
+myDatabase> // NOTE:- you can not use both 0 and 1 in the same object. The only exception is the _id field. Yo
+u should either specify the field you would like to include or the field you would like to exclude.
+
+myDatabase> db.posts.find({}, {category: 0, likes: 0})
+[
+  {
+    _id: ObjectId("64ad1415d4916ddb307f6cc2"),
+    title: 'Post Title 1',
+    body: 'Body of Post',
+    tags: [ 'news', 'events' ],
+    date: 'Tue Jul 11 2023 14:04:29 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad1881d4916ddb307f6cc3"),
+    title: 'Post Title 2',
+    body: 'Body of Post',
+    tags: [ 'news', 'technology' ],
+    date: 'Tue Jul 11 2023 14:23:21 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc4"),
+    title: 'Post Title 3',
+    body: 'Body of Post',
+    tags: [ 'news', 'events' ],
+    date: 'Tue Jul 11 2023 14:28:52 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc5"),
+    title: 'Post Title 4',
+    body: 'Body of Post',
+    tags: [ 'news', 'sports' ],
+    date: 'Tue Jul 11 2023 14:28:52 GMT+0530 (India Standard Time)'
+  }
+]
+myDatabase> // Now lets check for ERROR ---------->
+
+myDatabase> db.posts.find({}, {title: 1, date: 0})
+MongoServerError: Cannot do exclusion on field date in inclusion projection
+myDatabase> // this ERROR is because we use both 1 and 0 in the same object
+
+myDatabase> // EXCEPTION:- with _id field we can use both
+
+myDatabase> db.posts.find({}, {_id: 0, title: 1})
+[
+  { title: 'Post Title 1' },
+  { title: 'Post Title 2' },
+  { title: 'Post Title 3' },
+  { title: 'Post Title 4' }
+]
+myDatabase> // -------NO MATTER WHAT YOU STUDY || EXCEPTIONS ARE ALWAYS THERE -------
+
+myDatabase> // UPDATE DOCUMENT - "updateOne()", "updateMany()"
+
+myDatabase> // in both of these methods - the first parameter will be "DOCUMENT TO BE UPDATED" - the second parameter will be "DATA / FIELD TO BE UPDATED"
+
+myDatabase> // SAY - we have a document with title : "Post Title 1" and likes : 1, and we want to update the value of likes from 1 to 4.
+
+myDatabase> // for this we need to set the value by using the $set operator
+
+myDatabase> db.posts.updateOne({
+... title: "Post Title 1"
+... },
+... {
+... $set: {
+... likes: 4
+... }})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+myDatabase> // lets check if it is updated or not !
+
+myDatabase> db.posts.find({likes: 4})
+[
+  {
+    _id: ObjectId("64ad1415d4916ddb307f6cc2"),
+    title: 'Post Title 1',
+    body: 'Body of Post',
+    category: 'news',
+    likes: 4,
+    tags: [ 'news', 'events' ],
+    date: 'Tue Jul 11 2023 14:04:29 GMT+0530 (India Standard Time)'
+  }
+]
+myDatabase> // NOTE:- if you would like to insert the document if it is not found, you can use the upsert option ------- UPDATE (IF EXISTS) OR ELSE - INSERTED----------
+
+myDatabase> db.posts.updateOne({
+... title: "Post Title 5"
+... },
+... {
+... $set:
+... {
+... title: "Post Title 5",
+... body: "Body of Post",
+... category: "event",
+... likes: 5,
+... tags: [ "news", "events" ],
+... date: Date()
+... }
+... },
+... {
+... upsert: true
+... }
+... )
+{
+  acknowledged: true,
+  insertedId: ObjectId("64ad257ec43e6de988c68133"),
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 1
+}
+myDatabase> // lets check if its inserted or not !
+
+myDatabase> db.posts.find({title: "Post Title 5"})
+[
+  {
+    _id: ObjectId("64ad257ec43e6de988c68133"),
+    title: 'Post Title 5',
+    body: 'Body of Post',
+    category: 'event',
+    date: 'Tue Jul 11 2023 15:18:46 GMT+0530 (India Standard Time)',
+    likes: 5,
+    tags: [ 'news', 'events' ]
+  }
+]
+myDatabase> // lets say now we want to update the values of like field in such a way that every value in our likes field gets incremented by 1 ---- to achieve that we can use "updateMany()" method ----- also use the $inc operator (inc ---> increment)
+
+myDatabase> db.posts.updateMany({}, {
+... $inc:
+... {
+... likes: 1
+... }})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 5,
+  modifiedCount: 5,
+  upsertedCount: 0
+}
+myDatabase> //lets check our collection
+
+myDatabase> db.posts.find()
+[
+  {
+    _id: ObjectId("64ad1415d4916ddb307f6cc2"),
+    title: 'Post Title 1',
+    body: 'Body of Post',
+    category: 'news',
+    likes: 5,
+    tags: [ 'news', 'events' ],
+    date: 'Tue Jul 11 2023 14:04:29 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad1881d4916ddb307f6cc3"),
+    title: 'Post Title 2',
+    body: 'Body of Post',
+    category: 'Technology',
+    likes: 3,
+    tags: [ 'news', 'technology' ],
+    date: 'Tue Jul 11 2023 14:23:21 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc4"),
+    title: 'Post Title 3',
+    body: 'Body of Post',
+    category: 'event',
+    likes: 6,
+    tags: [ 'news', 'events' ],
+    date: 'Tue Jul 11 2023 14:28:52 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc5"),
+    title: 'Post Title 4',
+    body: 'Body of Post',
+    category: 'sports',
+    likes: 9,
+    tags: [ 'news', 'sports' ],
+    date: 'Tue Jul 11 2023 14:28:52 GMT+0530 (India Standard Time)'
+  },
+  {
+    _id: ObjectId("64ad257ec43e6de988c68133"),
+    title: 'Post Title 5',
+    body: 'Body of Post',
+    category: 'event',
+    date: 'Tue Jul 11 2023 15:18:46 GMT+0530 (India Standard Time)',
+    likes: 6,
+    tags: [ 'news', 'events' ]
+  }
+]
+myDatabase> // lets say we want to update category of all documents to "news" ------- as we need to set a values so we need to use $set: operator with updateMany() method
+
+myDatabase> db.posts.updateMany({},
+... {
+... $set:
+... {
+... type: "NEWS"
+... }})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 5,
+  modifiedCount: 5,
+  upsertedCount: 0
+}
+myDatabase> // lets check if our collection was updated or not !
+
+myDatabase> db.posts.find()
+[
+  {
+    _id: ObjectId("64ad1415d4916ddb307f6cc2"),
+    title: 'Post Title 1',
+    body: 'Body of Post',
+    category: 'news',
+    likes: 5,
+    tags: [ 'news', 'events' ],
+    date: 'Tue Jul 11 2023 14:04:29 GMT+0530 (India Standard Time)',
+    type: 'NEWS'
+  },
+  {
+    _id: ObjectId("64ad1881d4916ddb307f6cc3"),
+    title: 'Post Title 2',
+    body: 'Body of Post',
+    category: 'Technology',
+    likes: 3,
+    tags: [ 'news', 'technology' ],
+    date: 'Tue Jul 11 2023 14:23:21 GMT+0530 (India Standard Time)',
+    type: 'NEWS'
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc4"),
+    title: 'Post Title 3',
+    body: 'Body of Post',
+    category: 'event',
+    likes: 6,
+    tags: [ 'news', 'events' ],
+    date: 'Tue Jul 11 2023 14:28:52 GMT+0530 (India Standard Time)',
+    type: 'NEWS'
+  },
+  {
+    _id: ObjectId("64ad19ccd4916ddb307f6cc5"),
+    title: 'Post Title 4',
+    body: 'Body of Post',
+    category: 'sports',
+    likes: 9,
+    tags: [ 'news', 'sports' ],
+    date: 'Tue Jul 11 2023 14:28:52 GMT+0530 (India Standard Time)',
+    type: 'NEWS'
+  },
+  {
+    _id: ObjectId("64ad257ec43e6de988c68133"),
+    title: 'Post Title 5',
+    body: 'Body of Post',
+    category: 'event',
+    date: 'Tue Jul 11 2023 15:18:46 GMT+0530 (India Standard Time)',
+    likes: 6,
+    tags: [ 'news', 'events' ],
+    type: 'NEWS'
+  }
+]
+myDatabase>
